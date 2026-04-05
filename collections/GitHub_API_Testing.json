@@ -1,0 +1,550 @@
+{
+  "info": {
+    "_postman_id": "98fc5a1e-a08a-46c8-9d6f-1e767c1084b5",
+    "name": "GitHub_API_Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52657583",
+    "_collection_link": "https://go.postman.co/collection/52657583-98fc5a1e-a08a-46c8-9d6f-1e767c1084b5?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01_Authentication",
+      "item": [
+        {
+          "name": "GET User Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Verify the API actually knows who you are\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains correct username\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.login).to.not.be.null;\r",
+                  "    console.log(\"Authenticated as: \" + jsonData.login);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Purpose: To verify the token works."
+    },
+    {
+      "name": "02_Repository_Management",
+      "item": [
+        {
+          "name": "Create_Repository",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"C: Create Repo - Status 201\", () => pm.response.to.have.status(201));\r",
+                  "// Data Chaining: Save for the next tests\r",
+                  "var name = pm.response.json().name;\r",
+                  "pm.environment.set(\"current_repo\", name);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"QA-Automation-2026\", \"private\": false}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/user/repos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user",
+                "repos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update_Repository",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"U: Update Repo - Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"description\": \"Updated via Automation script\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/repos/thedatafae/{{current_repo}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "repos",
+                "thedatafae",
+                "{{current_repo}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete_Repository",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"D: Delete Repo - Status 204\", () => pm.response.to.have.status(204));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/repos/thedatafae/{{current_repo}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "repos",
+                "thedatafae",
+                "{{current_repo}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New repo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"C: Create Repo - Status 201\", () => pm.response.to.have.status(201));\r",
+                  "// Data Chaining: Save for the next tests\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"QA-Automation-2027\", \"private\": false}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/user/repos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user",
+                "repos"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Purpose: Create/Edit/Delete repos (CRUD testing)."
+    },
+    {
+      "name": "03_Negative_Scenarios",
+      "item": [
+        {
+          "name": "Unauthorized",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Negative - 401 Unauthorized expected\", () => {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "    pm.expect(pm.response.json().message).to.include(\"Requires authentication\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Negative - 404 Not Found expected\", () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/repos/thedatafae/random-fake-repo-name",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "repos",
+                "thedatafae",
+                "random-fake-repo-name"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Duplicate Resource",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 422 Unprocessable Entity\", function () {\r",
+                  "    pm.response.to.have.status(422);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Error message confirms duplicate\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.errors[0].message).to.include(\"name already exists\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"QA-Automation-2027\", \"private\": false}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/user/repos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user",
+                "repos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid Payload",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 or 422\", function () {\r",
+                  "    // GitHub usually returns 422 for invalid types in the body\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 422]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": true,\r\n    \"private\": \"maybe\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/user/repos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user",
+                "repos"
+              ]
+            },
+            "description": "What if a user sends a request that doesn't follow the rules? (e.g., sending a Boolean instead of a String for the name)."
+          },
+          "response": []
+        },
+        {
+          "name": "Empty Name Payload",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 422 - Unprocessable Entity\", function () {\r",
+                  "    pm.response.to.have.status(422);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Error message is descriptive\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    // Instead of looking for \"Validation Failed\", we look for \"blank\" or \"short\"\r",
+                  "    pm.expect(jsonData.message).to.be.oneOf([\r",
+                  "        \"New repository name must not be blank\",\r",
+                  "        \"Repository name is too short\",\r",
+                  "        \"Validation Failed\"\r",
+                  "    ]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/user/repos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user",
+                "repos"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Purpose: Test 401 (Invalid token) and 404 (Repo not found)."
+    },
+    {
+      "name": "Cleanup",
+      "item": [
+        {
+          "name": "New Request",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// List of repos we want to make sure are GONE\r",
+                  "if (!pm.collectionVariables.get(\"repos_to_delete\")) {\r",
+                  "    pm.collectionVariables.set(\"repos_to_delete\", [\"QA-Automation-2026\", \"QA-Automation-2027\", \"true\"]);\r",
+                  "}\r",
+                  "\r",
+                  "let repos = pm.collectionVariables.get(\"repos_to_delete\");\r",
+                  "let currentRepo = repos.shift(); // Get the first one in the list\r",
+                  "\r",
+                  "pm.environment.set(\"repo_to_clean\", currentRepo);\r",
+                  "pm.collectionVariables.set(\"repos_to_delete\", repos);\r",
+                  "\r",
+                  "console.log(\"Cleaning up repo: \" + currentRepo);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Cleanup Successful or Already Deleted\", function () {\r",
+                  "    // 204 means deleted, 404 means it was already gone (which is fine for cleanup)\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([204, 404]);\r",
+                  "});\r",
+                  "\r",
+                  "let repos = pm.collectionVariables.get(\"repos_to_delete\");\r",
+                  "\r",
+                  "if (repos.length > 0) {\r",
+                  "    // This is the magic line that repeats the request\r",
+                  "    postman.setNextRequest(\"Cleanup - Delete Test Artifacts\");\r",
+                  "} else {\r",
+                  "    // Stop the loop and clear variables\r",
+                  "    pm.collectionVariables.unset(\"repos_to_delete\");\r",
+                  "    pm.environment.unset(\"repo_to_clean\");\r",
+                  "    console.log(\"Cleanup complete. Environment is fresh.\");\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://api.github.com/repos/thedatafae/{{repo_to_clean}}",
+              "protocol": "https",
+              "host": [
+                "api",
+                "github",
+                "com"
+              ],
+              "path": [
+                "repos",
+                "thedatafae",
+                "{{repo_to_clean}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
